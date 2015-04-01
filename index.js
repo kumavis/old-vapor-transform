@@ -1,20 +1,24 @@
-var HttpMaster = require('http-master');
-var treeify = require('treeify').asTree
-var routerConfig = require('./router.json')
-var webServer = require('./web.js')
-var vaporServer = require('./vapor.js')
-var startRpc = require('./rpc.js')
 var PORT = process.env.PORT || 5000
+var express = require('express')
+var request = require('request')
+var cors = require('cors')
+var dappTransform = require('./lib/dapp-transform.js')
 
-webServer()
-vaporServer()
-startRpc()
+var app = express()
+app.use(cors())
 
-var proxyConfig = { ports: {} }
-proxyConfig.ports[PORT] = { router: routerConfig }
+app.get('/:target', function (req, res) {
+  var url = req.params.target
+  console.log('proxying => '+url)
 
-var httpMaster = new HttpMaster()
-httpMaster.init(proxyConfig, function(err) {
-  console.log('PROXY listening on', PORT)
-  console.log('with config:\n', treeify(proxyConfig, true))
+  getDapp(url)
+    .pipe(res)
 })
+
+app.listen(PORT)
+console.log('Vapor Dapp-proxy listening on', PORT)
+
+function getDapp(url) {
+  return request(url)
+    .pipe(dappTransform(url))
+}
