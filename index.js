@@ -7,14 +7,14 @@ var dappTransform = require('./lib/dapp-transform.js')
 var app = express()
 app.use(cors())
 
-app.get('proxy/:target', function (req, res) {
+app.get('/:target', function (req, res) {
   var url = req.params.target
   console.log('proxying => '+url)
   request(url)
     .pipe(res)
 })
 
-app.get('/:target', function (req, res) {
+app.get('/dapp/:target', function (req, res) {
   var url = req.params.target
   console.log('transforming => '+url)
 
