@@ -1,6 +1,6 @@
 ### App ###
 
-build/exec-wrapper.js
+build/*.js
 
 # Created by https://www.gitignore.io
 
