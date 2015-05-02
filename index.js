@@ -45,9 +45,10 @@ function getDapp(url) {
 }
 
 function forwardReq(original) {
+  var url = original.params.target
   var req = request({
     method: original.method,
-    uri: original.params.target,
+    uri: url,
     headers: original.headers,
     followRedirects: false
   })
