@@ -1,27 +1,16 @@
 {
-  "name": "vapor-proxy",
+  "name": "vapor-transform",
   "version": "0.0.0",
-  "description": "A CORS proxy and dapp-mangler",
+  "description": "Dapp transform for Vapor",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "node build.js && node index.js",
-    "dev": "NODE_ENV=dev node build.js && node index.js"
+    "start": "node index.js"
   },
   "dependencies": {
-    "browserify": "^9.0.3",
-    "cors": "^2.5.3",
-    "escodegen": "^1.6.1",
-    "escope": "^1.0.3",
-    "esprima": "^2.2.0",
-    "esquery": "^0.3.0",
-    "ethereum.js": "^0.2.4",
-    "ethereumjs-util": "0.0.8",
     "express": "^4.12.3",
     "request": "^2.54.0",
-    "trumpet": "^1.7.0",
-    "uglify-stream": "git+https://github.com/kumavis/uglify-stream.git#patch-1",
-    "uniq": "^1.0.1"
+    "cors": "^2.5.3"
   },
   "engines": {
     "node": "0.10.x"

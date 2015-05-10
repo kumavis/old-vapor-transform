@@ -1,14 +1,14 @@
-var PORT = process.env.PORT || 5000
+var PORT = process.env.PORT || 6000
 var express = require('express')
 var request = require('request')
 var cors = require('cors')
-var dappTransform = require('./lib/dapp-transform.js')
+var dappTransform = require('dapp-transform')
 
 var app = express()
 app.use(cors())
 
 // transform dapp
-app.get('/dapp/:target', function(req, res) {
+app.get('/:target', function(req, res) {
   var url = req.params.target
   console.log('transforming => ' + url)
   getDapp(url)
@@ -18,19 +18,8 @@ app.get('/dapp/:target', function(req, res) {
     })
 })
 
-// generic proxy
-app.all('/:target', function(req, res) {
-  console.log('proxying => ' + req.params.target)
-  req
-    .pipe(forwardReq(req))
-    .pipe(res)
-    .on('error', function(err) {
-      res.status(500).send()
-    })
-})
-
 app.listen(PORT)
-console.log('Vapor Dapp-proxy listening on', PORT)
+console.log('Vapor Dapp transform listening on', PORT)
 
 
 function getDapp(url) {
@@ -42,18 +31,4 @@ function getDapp(url) {
     console.error('BAD DAPP:', url, err)
   })
   return req.pipe(dappTransform(url))
-}
-
-function forwardReq(original) {
-  var url = original.params.target
-  var req = request({
-    method: original.method,
-    uri: url,
-    headers: original.headers,
-    followRedirects: false
-  })
-  req.on('error', function(err) {
-    console.error('BAD PROXY:', url, err)
-  })
-  return req
 }

@@ -11,4 +11,4 @@
      ░
 ```
 
-Vapor Dapp Proxy - CORS proxy + Dapp mangler
+Vapor Dapp Transform
