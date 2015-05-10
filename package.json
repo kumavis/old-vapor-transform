@@ -10,7 +10,8 @@
   "dependencies": {
     "express": "^4.12.3",
     "request": "^2.54.0",
-    "cors": "^2.5.3"
+    "cors": "^2.5.3",
+    "dapp-transform": "git://github.com/airship-industries/dapp-transform.git#4e652192b4cc0091c71f164a051011226a57d086"
   },
   "engines": {
     "node": "0.10.x"
