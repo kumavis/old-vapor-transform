@@ -35,7 +35,7 @@ function getDapp(url) {
   var dappTransform = DappTransform({
     origin: url,
   })
-  dappTransform.on('finish', function(){
+  dappTransform.on('end', function(){
     var timerDuration = process.hrtime(timerStart)
     console.log('completed (',prettyHrtime(timerDuration),') =>',url)
   })
