@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "test": "echo 'no tests yet...' && exit 0",
     "start": "node index.js"
   },
   "dependencies": {
