@@ -4,6 +4,7 @@ var request = require('request')
 var cors = require('cors')
 var DappTransform = require('dapp-transform')
 var prettyHrtime = require('pretty-hrtime')
+var eos = require('end-of-stream')
 
 var app = express()
 app.use(cors())
@@ -35,7 +36,7 @@ function getDapp(url) {
   var dappTransform = DappTransform({
     origin: url,
   })
-  dappTransform.on('end', function(){
+  eos(dappTransform, function(){
     var timerDuration = process.hrtime(timerStart)
     console.log('completed (',prettyHrtime(timerDuration),') =>',url)
   })
