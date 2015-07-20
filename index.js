@@ -4,7 +4,6 @@ const cors = require('cors')
 const quickMultilevel = require('quick-multilevel')
 const DappTransform = require('dapp-transform')
 const prettyHrtime = require('pretty-hrtime')
-const duplexify = require('duplexify')
 const eos = require('end-of-stream')
 const readToEnd = require('readtoend').readToEnd
 const PORT = process.env.PORT || 9000
