@@ -18,61 +18,75 @@ app.use(cors())
 // transform dapp
 app.get('/:target', function(req, res) {
   var url = req.params.target
-  console.log('transforming => ' + url)
-  getDapp(url)
-    .pipe(res)
-    .on('error', function(err) {
-      res.status(500).send()
+  
+  transformCache.get(url, checkCache)
+
+  function checkCache(err, result){
+    if (err || !result) {
+      // cache miss
+      console.log('CACHE MISS -', url)
+      fetchDapp()
+    } else {
+      // cache hit
+      console.log('CACHE HIT -', url)
+      res.send(result)
+    }
+  }
+
+  function fetchDapp(err, result){
+    var timerStart = process.hrtime()
+    var didAbort = false
+      
+    // request
+    var dappReq = request({
+      url: url,
+      // dont follow redirects, forward them
+      followRedirect: function(dappRes){
+        didAbort = true
+        onRedirect(dappRes)
+        return false
+      },
     })
+
+    dappReq.on('error', function(err) {
+      console.error('BAD DAPP:', url, err)
+    })
+
+    // transform
+    var dappTransform = DappTransform({ origin: url })
+
+    // log on start
+    dappReq.once('data', function(err) {
+      if (didAbort) return
+      console.log('transforming => ' + url)
+    })
+
+    // write result to cache
+    readToEnd(dappTransform, function(err, result){
+      if (didAbort) return
+      if (err) return console.error('TRANSFORM FAILED:', url, err)
+      transformCache.put(url, result)
+    })
+
+    // log completion
+    eos(res, function(){
+      if (didAbort) return
+      var timerDuration = process.hrtime(timerStart)
+      console.log('transform completed (',prettyHrtime(timerDuration),') =>',url)
+    })
+    
+    // request then transform then respond
+    dappReq.pipe(dappTransform).pipe(res)
+  }
+
+  function onRedirect(dappRes){
+    var newUrl = dappRes.headers.location
+    var status = dappRes.statusCode
+    console.log('REDIRECT ('+status+')', url, '=>', newUrl)
+    res.redirect(status, newUrl)
+  }
+
 })
 
 app.listen(PORT)
 console.log('Vapor Dapp transform listening on', PORT)
-
-
-function getDapp(url) {
-  var duplex = duplexify()
-  
-  transformCache.get(url, function(err, result){
-    // not in cache
-    if (err || !result) {
-      console.log('CACHE MISS -', url)
-      var outStream = fetchDapp(url)
-      duplex.setReadable(outStream)
-      readToEnd(outStream, function(err, result){
-        if (err) return
-        transformCache.put(url, result)
-      })
-    } else {
-      console.log('CACHE HIT -', url)
-      duplex.push(result)
-      duplex.push(null)
-    }
-  })
-
-  return duplex
-}
-
-function fetchDapp(url) {
-  var timerStart = process.hrtime()
-  var req = request({
-    url: url,
-    // followRedirects: false
-  })
-
-  var dappTransform = DappTransform({
-    origin: url,
-  })
-  
-  req.on('error', function(err) {
-    console.error('BAD DAPP:', url, err)
-  })
-
-  eos(dappTransform, function(){
-    var timerDuration = process.hrtime(timerStart)
-    console.log('completed (',prettyHrtime(timerDuration),') =>',url)
-  })
-  req.pipe(dappTransform)
-
-  return dappTransform
-}
