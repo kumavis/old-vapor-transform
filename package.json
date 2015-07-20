@@ -11,7 +11,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "cors": "^2.7.1",
-    "dapp-transform": "git+https://9f5af73670f44f15ef6dc1f9f18b5334bb52f3db:x-oauth-basic@github.com/airship-industries/dapp-transform.git#9df79ae35b92db04b14ae58b1ad958c222a61549",
+    "dapp-transform": "git+https://git@github.com/metamask/dapp-transform.git#9df79ae35b92db04b14ae58b1ad958c222a61549",
     "duplexify": "^3.4.2",
     "end-of-stream": "^1.1.0",
     "express": "^4.12.3",
@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/airship-industries/vapor-proxy"
+    "url": "https://github.com/metamask/vapor-proxy"
   },
   "keywords": [
     "node",
