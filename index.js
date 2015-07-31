@@ -35,21 +35,23 @@ app.get('/:target', function(req, res) {
   function fetchDapp(err, result){
     var timerStart = process.hrtime()
     var didAbort = false
-      
-    // request
-    var dappReq = request({
-      url: url,
-      // dont follow redirects, forward them
-      followRedirect: function(dappRes){
-        didAbort = true
-        onRedirect(dappRes)
-        return false
-      },
-    })
+    
+    try {
+      // request
+      var dappReq = request({
+        url: url,
+        // dont follow redirects, forward them
+        followRedirect: function(dappRes){
+          didAbort = true
+          onRedirect(dappRes)
+          return false
+        },
+      })
+    } catch (err) {
+      return onError(err)
+    }
 
-    dappReq.on('error', function(err) {
-      console.error('BAD DAPP:', url, err)
-    })
+    dappReq.on('error', onError)
 
     // transform
     var dappTransform = DappTransform({ origin: url })
@@ -76,6 +78,10 @@ app.get('/:target', function(req, res) {
     
     // request then transform then respond
     dappReq.pipe(dappTransform).pipe(res)
+
+    function onError(err){
+      console.error('BAD DAPP:', url, err)
+    }
   }
 
   function onRedirect(dappRes){
