@@ -11,7 +11,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "cors": "^2.7.1",
-    "dapp-transform": "git+https://git@github.com/metamask/dapp-transform.git#1235ee13af7cb1258a56bcc3935edc48b52f396c",
+    "dapp-transform": "git+https://git@github.com/metamask/dapp-transform.git#0d3fc4f3360793b660107bf6322fe404ab9aaa47",
     "end-of-stream": "^1.1.0",
     "express": "^4.12.3",
     "pretty-hrtime": "^1.0.0",
