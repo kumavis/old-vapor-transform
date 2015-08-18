@@ -9,7 +9,9 @@ const readToEnd = require('readtoend').readToEnd
 const PORT = process.env.PORT || 9000
 const CACHE_DB = process.env.CACHE_DB
 
-var transformCache = quickMultilevel(CACHE_DB)
+if (CACHE_DB) {
+  var transformCache = quickMultilevel(CACHE_DB)  
+}
 
 var app = express()
 app.use(cors())
@@ -18,7 +20,11 @@ app.use(cors())
 app.get('/:target', function(req, res) {
   var url = req.params.target
   
-  transformCache.get(url, checkCache)
+  if (CACHE_DB) {
+    transformCache.get(url, checkCache)
+  } else {
+    fetchDapp()
+  }
 
   function checkCache(err, result){
     if (err || !result) {
@@ -63,11 +69,13 @@ app.get('/:target', function(req, res) {
     })
 
     // write result to cache
-    readToEnd(dappTransform, function(err, result){
-      if (didAbort) return
-      if (err) return console.error('TRANSFORM FAILED:', url, err)
-      transformCache.put(url, result)
-    })
+    if (CACHE_DB) {
+      readToEnd(dappTransform, function(err, result){
+        if (didAbort) return
+        if (err) return console.error('TRANSFORM FAILED:', url, err)
+        transformCache.put(url, result)
+      })
+    }
 
     // log completion
     eos(res, function(){
