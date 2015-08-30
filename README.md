@@ -1,8 +1,23 @@
+```
+ ██▒   █▓ ▄▄▄       ██▓███   ▒█████   ██▀███
+▓██░   █▒▒████▄    ▓██░  ██▒▒██▒  ██▒▓██ ▒ ██▒
+ ▓██  █▒░▒██  ▀█▄  ▓██░ ██▓▒▒██░  ██▒▓██ ░▄█ ▒
+  ▒██ █░░░██▄▄▄▄██ ▒██▄█▓▒ ▒▒██   ██░▒██▀▀█▄
+   ▒▀█░   ▓█   ▓██▒▒██▒ ░  ░░ ████▓▒░░██▓ ▒██▒
+   ░ ▐░   ▒▒   ▓▒█░▒▓▒░ ░  ░░ ▒░▒░▒░ ░ ▒▓ ░▒▓░
+   ░ ░░    ▒   ▒▒ ░░▒ ░       ░ ▒ ▒░   ░▒ ░ ▒░
+     ░░    ░   ▒   ░░       ░ ░ ░ ▒    ░░   ░
+      ░        ░  ░             ░ ░     ░
+     ░
+```
+
+# Vapor Dapp Transform
+
 provides fine-grained control over an html5 app
 by transforming html, css, and js
 
 
-anatomy of html transforms
+### anatomy of html transforms
 
 script tags injected at top:
 * config (small, dynamic)
@@ -17,9 +32,9 @@ wrapper + AST transformations ensure all references to 'window' or 'document'
 actually reference the 'fakeWindow' and 'fakeDocument' created in the initialization
 
 
-# DOM notes
+### DOM notes
 
-### navigation and routing
+##### navigation and routing
 
 app routing happens in a number of ways.
 

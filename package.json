@@ -1,11 +1,11 @@
 {
-  "name": "dapp-transform",
+  "name": "vapor-transform",
   "version": "5.0.0",
   "description": "",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "test": "node test/stream.js && beefy test/index.js --open --live",
+    "test": "echo 'no tests yet...' && exit 0",
     "dev": "open example/browser.html && TRANSFORM_BASE_URL='http://localhost:9000/' PROXY_URL='https://proxy.metamask.io/' node server.js",
     "start": "node server.js"
   },
