@@ -7,8 +7,8 @@ const from = require('from')
 const browserify = require('browserify')
 const wrap = require('wrap-stream')
 const eos = require('end-of-stream')
-const HtmlTransform = require('./').HtmlTransform
-const generateEnvironment = require('./').generateEnvironment
+const HtmlTransform = require('./index.js').HtmlTransform
+const generateEnvironment = require('./index.js').generateEnvironment
 
 
 generateEnvironment({}, function(err, environment){
