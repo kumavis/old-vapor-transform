@@ -40,7 +40,7 @@
     "trumpet": "1.7.1",
     "uniq": "1.0.1",
     "web3": "^0.12.2",
-    "blockapps-web3": "git://github.com/kumavis/blockapps-web3.git#ea2d9ebd0c5bc4ddeaa556b98725b1d864359868",
+    "blockapps-web3": "git://github.com/kumavis/blockapps-web3.git#9c1ee8e99efe277804fc47d8b11142abbc46180c",
     "xtend": "4.0.0"
   },
   "devDependencies": {
