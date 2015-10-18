@@ -35,6 +35,7 @@
     "ethereumjs-tx": "^0.6.7",
     "ethereumjs-util": "0.1.0",
     "meowserify": "1.0.1",
+    "object.observe": "^0.2.6",
     "readable-stream": "2.0.1",
     "request": "2.55.0",
     "streams2": "0.1.1",
