@@ -92,5 +92,6 @@ function performTransform(label, url, transformStream, res){
 
   function onError(err){
     console.error('BAD '+label+':', url, err)
+    console.error(err.stack)
   }
 }
