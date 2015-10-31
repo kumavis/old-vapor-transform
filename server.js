@@ -32,7 +32,6 @@ function startServer(environment, cb){
     var transform = HtmlTransform({
       targetUrl: targetUrl,
       environment: environment,
-      skipInit: skipInit,
     })
     performTransform('html', targetUrl, transform, res)
   })
