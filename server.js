@@ -27,10 +27,12 @@ function startServer(environment, cb){
   // transform html
   app.get('/html/:target', function(req, res) {
     var targetUrl = req.params.target
+    var skipInit = !req.query.init
     console.log('html:', targetUrl)
     var transform = HtmlTransform({
       targetUrl: targetUrl,
       environment: environment,
+      skipInit: skipInit,
     })
     performTransform('html', targetUrl, transform, res)
   })
