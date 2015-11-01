@@ -1,8 +1,8 @@
+const from = require('from')
 const async = require('async')
 const express = require('express')
 const request = require('request')
 const cors = require('cors')
-const eos = require('end-of-stream')
 const hrtime = require('browser-process-hrtime')
 const prettyHrtime = require('pretty-hrtime')
 const HtmlTransform = require('./index.js').HtmlTransform
@@ -11,7 +11,7 @@ const CssTransform = require('./index.js').CssTransform
 const generateEnvironment = require('./index.js').generateEnvironment
 const PORT = process.env.PORT || 9000
 
-
+var SIMPLE_CACHE = {}
 var envOpts = {}
 
 async.waterfall([
@@ -69,31 +69,38 @@ function startServer(environment, cb){
 // request target, perform tranform, respond
 // handles errors during this process
 function performTransform(label, url, transformStream, res){
+  console.log('transforming '+label+' => ' + url)
   var startTime = hrtime()
   var didAbort = false
+  var req = null
   
+  // get request
   try {
-    // request
-    var req = request({ url: url })
+    var cached = SIMPLE_CACHE[url]
+    if (cached) {
+      req = from([cached])
+    } else {
+      req = request({ url: url })
+      req
+    }
   } catch (err) {
-    return onError(err)
+    onError(err)
+    return
   }
-
   req.on('error', onError)
 
-  // log on start
-  req.once('data', function(err) {
-    if (didAbort) return
-    console.log('transforming '+label+' => ' + url)
-  })
-  
   // request then transform then respond
-  var processStream = req
-  .pipe(transformStream)
-  .pipe(res)
+  var processStream = req.pipe(transformStream)
 
-  eos(processStream, function(){
+  processStream.pipe(res)
+
+  toArray(processStream, function (err, arr) {
+    if (err) return
     if (didAbort) return
+    // update cache
+    var result = arr.join('')
+    SIMPLE_CACHE[url] = result
+    // completion message
     var totalTime = hrtime(startTime)
     var timeMessage = prettyHrtime(totalTime)
     console.log('transform complete '+label+' ('+timeMessage+') => ' + url)
@@ -103,6 +110,7 @@ function performTransform(label, url, transformStream, res){
     didAbort = true
     console.error('BAD '+label+':', url, err)
     console.error(err.stack)
+    // completion message
     var totalTime = hrtime(startTime)
     var timeMessage = prettyHrtime(totalTime)
     console.log('transform interupted '+label+' ('+timeMessage+') => ' + url)
