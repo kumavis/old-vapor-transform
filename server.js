@@ -74,10 +74,11 @@ function performTransform(label, url, transformStream, res){
   var startTime = hrtime()
   var didAbort = false
   var req = null
+  var cached = null
   
   // get request
   try {
-    var cached = SIMPLE_CACHE[url]
+    cached = SIMPLE_CACHE[url]
     if (cached) {
       req = from([cached])
     } else {
@@ -89,11 +90,11 @@ function performTransform(label, url, transformStream, res){
   }
 
   req.on('error', onError)
-  streamToArray(req, onCompelete
+  streamToArray(req, onComplete)
 
   req.pipe(res)
 
-  function onCompelete(err, arr) {
+  function onComplete(err, arr) {
     if (err) return
     if (didAbort) return
     // update cache
