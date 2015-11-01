@@ -1,4 +1,5 @@
 const from = require('from')
+const streamToArray = require('stream-to-array')
 const async = require('async')
 const express = require('express')
 const request = require('request')
@@ -80,21 +81,19 @@ function performTransform(label, url, transformStream, res){
     if (cached) {
       req = from([cached])
     } else {
-      req = request({ url: url })
-      req
+      req = request({ url: url }).pipe(transformStream)
     }
   } catch (err) {
     onError(err)
     return
   }
+
   req.on('error', onError)
+  streamToArray(req, onCompelete
 
-  // request then transform then respond
-  var processStream = req.pipe(transformStream)
+  req.pipe(res)
 
-  processStream.pipe(res)
-
-  toArray(processStream, function (err, arr) {
+  function onCompelete(err, arr) {
     if (err) return
     if (didAbort) return
     // update cache
@@ -104,7 +103,7 @@ function performTransform(label, url, transformStream, res){
     var totalTime = hrtime(startTime)
     var timeMessage = prettyHrtime(totalTime)
     console.log('transform complete '+label+' ('+timeMessage+') => ' + url)
-  })
+  }
 
   function onError(err){
     didAbort = true
