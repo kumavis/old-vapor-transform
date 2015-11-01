@@ -2,6 +2,9 @@ const async = require('async')
 const express = require('express')
 const request = require('request')
 const cors = require('cors')
+const eos = require('end-of-stream')
+const hrtime = require('browser-process-hrtime')
+const prettyHrtime = require('pretty-hrtime')
 const HtmlTransform = require('./index.js').HtmlTransform
 const JsTransform = require('./index.js').JsTransform
 const CssTransform = require('./index.js').CssTransform
@@ -28,7 +31,6 @@ function startServer(environment, cb){
   app.get('/html/:target', function(req, res) {
     var targetUrl = req.params.target
     var skipInit = !req.query.init
-    console.log('html:', targetUrl)
     var transform = HtmlTransform({
       targetUrl: targetUrl,
       environment: environment,
@@ -39,7 +41,6 @@ function startServer(environment, cb){
   // transform js
   app.get('/js/:target', function(req, res) {
     var targetUrl = req.params.target
-    console.log('js:', targetUrl)
     var transform = JsTransform({
       targetUrl: targetUrl,
       environment: environment,
@@ -50,7 +51,6 @@ function startServer(environment, cb){
   // transform css
   app.get('/css/:target', function(req, res) {
     var targetUrl = req.params.target
-    console.log('css:', targetUrl)
     var transform = CssTransform({
       targetUrl: targetUrl,
       environment: environment,
@@ -69,6 +69,7 @@ function startServer(environment, cb){
 // request target, perform tranform, respond
 // handles errors during this process
 function performTransform(label, url, transformStream, res){
+  var startTime = hrtime()
   var didAbort = false
   
   try {
@@ -87,12 +88,23 @@ function performTransform(label, url, transformStream, res){
   })
   
   // request then transform then respond
-  req
+  var processStream = req
   .pipe(transformStream)
   .pipe(res)
 
+  eos(processStream, function(){
+    if (didAbort) return
+    var totalTime = hrtime(startTime)
+    var timeMessage = prettyHrtime(totalTime)
+    console.log('transform complete '+label+' ('+timeMessage+') => ' + url)
+  })
+
   function onError(err){
+    didAbort = true
     console.error('BAD '+label+':', url, err)
     console.error(err.stack)
+    var totalTime = hrtime(startTime)
+    var timeMessage = prettyHrtime(totalTime)
+    console.log('transform interupted '+label+' ('+timeMessage+') => ' + url)
   }
 }
