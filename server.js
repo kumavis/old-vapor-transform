@@ -81,15 +81,18 @@ function performTransform(label, url, transformStream, res){
     cached = SIMPLE_CACHE[url]
     if (cached) {
       req = from([cached])
+      req.on('error', onError)
     } else {
-      req = request({ url: url }).pipe(transformStream)
+      req = request({ url: url })
+      req.on('error', onError)
+      req = req.pipe(transformStream)
+      req.on('error', onError)
     }
   } catch (err) {
     onError(err)
     return
   }
 
-  req.on('error', onError)
   streamToArray(req, onComplete)
 
   req.pipe(res)
