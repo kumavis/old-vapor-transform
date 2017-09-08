@@ -13,6 +13,8 @@
 
 # Vapor Dapp Transform
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kumavis/old-vapor-transform.svg)](https://greenkeeper.io/)
+
 provides fine-grained control over an html5 app
 by transforming html, css, and js
 
